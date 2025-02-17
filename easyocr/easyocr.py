@@ -355,7 +355,8 @@ class Reader(object):
                   workers = 0, allowlist = None, blocklist = None, detail = 1,\
                   rotation_info = None,paragraph = False,\
                   contrast_ths = 0.1,adjust_contrast = 0.5, filter_ths = 0.003,\
-                  y_ths = 0.5, x_ths = 1.0, reformat=True, output_format='standard'):
+                  y_ths = 0.5, x_ths = 1.0, reformat=True, output_format='standard',\
+                  keep_all_rotations = False):
 
         if reformat:
             img, img_cv_grey = reformat_input(img_cv_grey)
@@ -408,6 +409,9 @@ class Reader(object):
             if rotation_info and (horizontal_list+free_list):
                 # Reshape result to be a list of lists, each row being for 
                 # one of the rotations (first row being no rotation)
+                if keep_all_rotations:
+                    result = [result[i::image_len] for i in range(image_len)]
+                    return result
                 result = set_result_with_confidence(
                     [result[image_len*i:image_len*(i+1)] for i in range(len(rotation_info) + 1)])
 
@@ -446,7 +450,7 @@ class Reader(object):
                  slope_ths = 0.1, ycenter_ths = 0.5, height_ths = 0.5,\
                  width_ths = 0.5, y_ths = 0.5, x_ths = 1.0, add_margin = 0.1, 
                  threshold = 0.2, bbox_min_score = 0.2, bbox_min_size = 3, max_candidates = 0,
-                 output_format='standard'):
+                 output_format='standard', keep_all_rotations = False):
         '''
         Parameters:
         image: file path or numpy-array or a byte stream object
@@ -469,7 +473,7 @@ class Reader(object):
                                 decoder, beamWidth, batch_size,\
                                 workers, allowlist, blocklist, detail, rotation_info,\
                                 paragraph, contrast_ths, adjust_contrast,\
-                                filter_ths, y_ths, x_ths, False, output_format)
+                                filter_ths, y_ths, x_ths, False, output_format, keep_all_rotations)
 
         return result
     
